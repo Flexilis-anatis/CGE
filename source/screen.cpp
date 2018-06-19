@@ -6,6 +6,12 @@ namespace curses {
 
 namespace cge {
 
+void Screen::resetCursor()
+{
+    this->move(cursorPosition);
+}
+
+
 Screen::Screen(Point startCursorPos)
 {
     curses::initscr();
@@ -13,31 +19,28 @@ Screen::Screen(Point startCursorPos)
 }
 
 
-~Screen::Screen()
+Screen::~Screen()
 {
     curses::endwin();
 }
 
 
-template<typename StringType>
-void Screen::write(StringType towrite)
+void Screen::write(CString towrite)
 {
     curses::printw(towrite);
 }
 
-template<typename StringType>
-void Screen::write(StringType towrite, Point position)
+void Screen::write(CString towrite, Point position)
 {
     this->move(position);
     curses::printw(towrite);
-    curses::move(cursorPosition.x, cursorPosition.y);
+    this->resetCursor();
 }
 
 
 void Screen::move(Point position)
 {
-    cursorPosition = position;
-    this->move(cursorPosition.x, cursorPositon.y);
+    curses::move(position.x, position.y);
 }
 
 
