@@ -1,2 +1,2 @@
 # CGE
-A simple console rendering engine
+## A simple console rendering engine
