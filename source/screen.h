@@ -1,14 +1,11 @@
 #ifndef SCREEN_H_INCLUDED
 #define SCREEN_H_INCLUDED
 
-
 namespace cge {
 
 class Screen
 {
-    struct Point {unsigned short y, x;};
-
-    Point cursorPosition;
+    struct Point {unsigned short y,x;} cursorPosition;
 
     void resetCursor();
 
@@ -19,7 +16,10 @@ public:
     ~Screen();
 
     void write(CString towrite);
-    void write(CString towrite, Point position);
+    void write(CString Point position);
+
+    void writenow(CString towrite);
+    void writenow(CString towrite, Point position);
 
     void move(Point position);
     void display();

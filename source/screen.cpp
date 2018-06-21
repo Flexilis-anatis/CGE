@@ -27,14 +27,28 @@ Screen::~Screen()
 
 void Screen::write(CString towrite)
 {
-    curses::printw(towrite);
+    curses::printw(towrite.c_str());
 }
 
 void Screen::write(CString towrite, Point position)
 {
     this->move(position);
-    curses::printw(towrite);
+    curses::printw(towrite.c_str());
     this->resetCursor();
+}
+
+
+void Screen::writenow(CString towrite)
+{
+    write(towrite);
+    display();
+}
+
+
+void Screen::writenow(CString towrite, Point position)
+{
+    write(towrite, position);
+    display();
 }
 
 
