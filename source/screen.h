@@ -5,7 +5,8 @@ namespace cge {
 
 class Screen
 {
-    struct Point {unsigned short y,x;} cursorPosition;
+    struct Point {unsigned int y,x;};
+    Point cursorPosition;
 
     void resetCursor();
 
@@ -16,7 +17,7 @@ public:
     ~Screen();
 
     void write(CString towrite);
-    void write(CString Point position);
+    void write(CString towrite, Point position);
 
     void writenow(CString towrite);
     void writenow(CString towrite, Point position);

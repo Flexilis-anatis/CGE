@@ -5,9 +5,17 @@
 
 #include "source/screen.h"
 
+
+template<typename T>
+bool indexInVector(unsigned int index, const std::vector<T>& vector)
+{
+    return index < vector.size();
+}
+
+
 class CGOL
 {
-    cge::Screen screen;
+    cge::Screen& screen;
 
     typedef unsigned int Size;
     Size width, height;
@@ -16,14 +24,24 @@ class CGOL
     // looking for a cell may be quicker in the long run
     std::vector< std::vector<bool> > map;
 
-    struct Cell {unsigned int x,y;};
+    struct Cell {Size x,y;};
 
     uint8_t countNeighbors(const Size x, const Size y)
     {
         uint8_t neighbors = 0;
-        for (uint8_t i = -1; i < 2; i++)
-            for (uint8_t j = -1; i < 2; j++)
-                neighbors += ((i + j == 0) ? 0 : map[x+i][y+j]);
+
+        for (int8_t i = -1; i < 2; ++i)
+        {
+            for (int8_t j = -1; j < 2; ++j)
+            {
+                indexInVector(x+i, map) &&\
+                indexInVector(y+j, map[x+i]) &&\
+                (i != 0 || j != 0) &&\
+                map[x+i][y+j] &&\
+                ++neighbors;
+            }
+        }
+
         return neighbors;
     }
     
@@ -33,7 +51,7 @@ public:
     : screen(screen), width(width), height(height), map(map)
     {
         this->map.resize(height);
-        for (Size x = 0; x < width; x++)
+        for (Size x = 0; x < height; x++)
             this->map[x].resize(width);
     }
 
@@ -42,13 +60,12 @@ public:
     {
         std::vector<Cell> cellsToToggle;
         uint8_t neighbors;
-        for (unsigned int x = 0; x < height; x++)
+
+        for (Size x = 0; x < height; ++x)
         {
-            for (unsigned int y = 0; y < width; y++)
+            for (Size y = 0; y < width; ++y)
             {
                 neighbors = countNeighbors(x, y);
-
-                if (map[x][y]) screen.writenow(std::to_string(neighbors).c_str());
                 
                 if ((neighbors == 3 && !map[x][y]) || (neighbors != 2 && neighbors != 3 && map[x][y]))
                     cellsToToggle.push_back({x, y});
@@ -60,10 +77,11 @@ public:
     }
 
     void display()
-    {
+    {   
         for (unsigned short x = 0; x < height; x++)
             for (unsigned short y = 0; y < width; y++)
-                screen.write((map[x][y] ? "#" : "-"), {x, y});
+                screen.write((map[x][y] ? "#-" : "--"), {x, y});
+        
         screen.display();
     }
 };
@@ -74,12 +92,15 @@ int main()
 
     CGOL cgol(screen,
         {
-            {true, true, false},
-            {true}
-        }
+            {0,0,1},
+            {1,0,1},
+            {0,1,1}
+        },
+        20, 20
     );
 
-    while (true)
+
+    while(true)
     {
         cgol.display();
         cgol.evolve();
@@ -90,3 +111,4 @@ int main()
 
     return 0;
 }
+    
